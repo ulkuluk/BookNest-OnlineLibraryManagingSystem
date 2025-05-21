@@ -1,0 +1,76 @@
+GET http://localhost:5000/users
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywibmFtZSI6ImFkbWluIiwiZW1haWwiOiJhZG1pbkBhZG1pbi5jb20iLCJwaG9uZSI6IjA4NyIsInJvbGUiOiJhZG1pbiIsImNyZWF0ZWRBdCI6IjIwMjUtMDUtMjBUMDY6MjA6MTkuMDAwWiIsInVwZGF0ZWRBdCI6IjIwMjUtMDUtMjBUMDY6Mjc6MTUuMDAwWiIsImlhdCI6MTc0NzcyMjQ2MCwiZXhwIjoxNzQ3NzIyNDkwfQ.93sHRGyYvvq-ER8t_uaO49j8BZLY8Q35dXtblmFXf_U
+
+###
+POST http://localhost:5000/register 
+Content-Type: application/json
+
+{
+    "name": "user", 
+    "email": "user@user.com", 
+    "phone": "087", 
+    "password": "123",
+    "role": "user"
+}
+
+###
+POST http://localhost:5000/login
+Content-Type: application/json
+
+{
+    "email": "admin@admin.com", 
+    "password": "123"
+}
+
+###
+DELETE http://localhost:5000/logout
+Cookie: refreshToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywibmFtZSI6ImFkbWluIiwiZW1haWwiOiJhZG1pbkBhZG1pbi5jb20iLCJwaG9uZSI6IjA4NyIsInJvbGUiOiJhZG1pbiIsImNyZWF0ZWRBdCI6IjIwMjUtMDUtMjBUMDY6MjA6MTkuMDAwWiIsInVwZGF0ZWRBdCI6IjIwMjUtMDUtMjBUMTU6MDU6MjMuMDAwWiIsImlhdCI6MTc0Nzc1NDU3NiwiZXhwIjoxNzQ3ODQwOTc2fQ.cvGg2MG3AJvK-mepPEQAgqKRBXJEhrpYMIwU9ZClOwU
+
+###
+POST http://localhost:5000/add-book
+Content-Type: application/json
+
+{
+    "title": "cara menjadi programmer",
+    "author": "alfi",
+    "description": "belajar jadi programmer",
+    "isbn": "1234567890125",
+    "cover_url": "https://example.com/cover.jpg",
+    "available_copies": 10,
+    "total_copies": 10
+}
+
+###
+GET http://localhost:5000/book/1
+
+###
+PUT http://localhost:5000/update-book/1
+Content-Type: application/json
+
+{
+    "title": "cara menjadi budiman",
+    "author": "alfi",
+    "description": "belajar jadi budiman",
+    "isbn": "1234567890124",
+    "cover_url": "https://example.com/cover.jpg",
+    "available_copies": 10,
+    "total_copies": 10
+}
+
+###
+POST http://localhost:5000/add-reservation
+Content-Type: application/json
+
+{
+    "email": "user@user.com",
+    "isbn": "1234567890124"
+}
+
+###
+PUT http://localhost:5000/confirm-reservation/4
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywibmFtZSI6ImFkbWluIiwiZW1haWwiOiJhZG1pbkBhZG1pbi5jb20iLCJwaG9uZSI6IjA4NyIsInJvbGUiOiJhZG1pbiIsImNyZWF0ZWRBdCI6IjIwMjUtMDUtMjBUMDY6MjA6MTkuMDAwWiIsInVwZGF0ZWRBdCI6IjIwMjUtMDUtMjBUMDY6MzQ6MDguMDAwWiIsImlhdCI6MTc0NzcyMzUxOSwiZXhwIjoxNzQ3NzIzNTQ5fQ.zl4KJuo4aQJ_hhivPHrZbq5VsvSWc_8vAdbEBJiaFhQ
+
+{
+    "status": "cancelled"
+}
