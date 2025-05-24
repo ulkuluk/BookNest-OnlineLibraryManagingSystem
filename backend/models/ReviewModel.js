@@ -7,7 +7,6 @@ const Review = db.define("review", {
   email: {
     type: DataTypes.STRING,
     allowNull: false,
-    unique: true,
     references: {
         model: User,
         key: "email",
@@ -17,7 +16,6 @@ const Review = db.define("review", {
   isbn: {
     type: DataTypes.STRING,
     allowNull: false,
-    unique: true,
     references: {
         model: Book,
         key: "isbn",

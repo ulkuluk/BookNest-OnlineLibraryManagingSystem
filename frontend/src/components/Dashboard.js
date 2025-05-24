@@ -71,7 +71,7 @@ const Dashboard = () => {
       await axios.delete(`${BASE_URL}/logout`, { withCredentials: true }); // atau axios.get/post sesuai backend
       localStorage.clear();
       console.log("Logout success");
-      navigate("/");
+      window.location.reload();
     } catch (error) {
       console.log(error);
     }
@@ -92,7 +92,9 @@ const Dashboard = () => {
             </li>
           </Link>
           <li>
-            <FaClipboardList className="icon" /> Review
+            <Link to="/user-info">
+              <FaClipboardList className="icon" /> account
+            </Link>
           </li>
           {role === "admin" && (
             <Link to="reservation-admin">
@@ -116,7 +118,7 @@ const Dashboard = () => {
               <span className="user-name">Hello, {name}</span>
             ) : (
               <>
-                <Link to="login" className="auth-link">
+                <Link to="registration" className="auth-link">
                   Sign In
                 </Link>
                 <span className="separator">|</span>
@@ -127,7 +129,15 @@ const Dashboard = () => {
             )}
           </div>
         </div>
-        <h2>Books</h2>
+        <div className="books-header">
+          <h2>Books</h2>
+          {role === "admin" && (
+            <Link to="/add-book">
+              <button className="add-book-button">Add Book</button>
+            </Link>
+          )}
+        </div>
+
         <div className="book-grid">
           {Books.map((book) => (
             <Link

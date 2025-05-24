@@ -20,7 +20,7 @@ const Book = db.define("book", {
     unique: true
   },
   cover_url: {
-    type: DataTypes.STRING,
+    type: DataTypes.TEXT,
     allowNull: true
   },
   total_copies: {

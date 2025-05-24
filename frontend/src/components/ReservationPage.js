@@ -86,6 +86,7 @@ const ReservationPage = () => {
               />
               <div className="reservation-info">
                 <h3>{item.book?.title}</h3>
+                <p><strong>Reservation ID:</strong> {item.id}</p>
                 <p><strong>ISBN:</strong> {item.isbn}</p>
                 <p><strong>Status:</strong> {item.status}</p>
               </div>

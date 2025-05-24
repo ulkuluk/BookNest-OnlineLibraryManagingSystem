@@ -22,7 +22,7 @@ app.use(
 );
 app.get("/", (req, res) => res.render("index"));
 app.use(express.json());
-app.use(UserRoute, BookRoute, ReservationRoute);
+app.use(UserRoute, BookRoute, ReservationRoute, ReviewRoute);
 
 
 app.listen(5000, () => console.log("Server connected"));

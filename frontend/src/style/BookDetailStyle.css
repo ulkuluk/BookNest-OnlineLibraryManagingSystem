@@ -84,6 +84,12 @@
   color: #666;
 }
 
+.user-actions {
+  margin-top: 20px;
+  display: flex;
+  gap: 10px;
+}
+
 .admin-actions {
   margin-top: 20px;
   display: flex;
@@ -119,6 +125,7 @@
   background-color: #b71c1c;
 }
 
+.review-button,
 .reserve-button {
   background-color: #3498db;
   color: white;
@@ -135,3 +142,41 @@
   background-color: #2980b9;
 }
 
+.review-button:hover{
+  background-color: #2980b9;
+}
+
+.book-reviews {
+  margin-top: 40px;
+  border-top: 1px solid #ddd;
+  padding-top: 20px;
+}
+
+.book-reviews h3 {
+  font-size: 22px;
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.review-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.review-item {
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px dashed #ccc;
+}
+
+.review-item p {
+  margin: 5px 0;
+  font-size: 15px;
+  color: #444;
+}
+
+.no-review {
+  font-style: italic;
+  color: #777;
+}

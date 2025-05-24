@@ -5,6 +5,17 @@ async function addReservation(req, res) {
   try {
     const { email, isbn, status, reserved_at, confirmed_at } = req.body;
 
+    // Cari buku berdasarkan ISBN
+    const book = await Book.findOne({ where: { isbn } });
+    if (!book) {
+      return res.status(404).json({ msg: "Buku tidak ditemukan" });
+    }
+
+    if (book.available_copies <= 0) {
+      return res.status(400).json({ msg: "Tidak ada salinan tersedia" });
+    }
+
+    // Buat reservasi
     await Reservation.create({
       email,
       isbn,
@@ -12,6 +23,9 @@ async function addReservation(req, res) {
       reserved_at,
       confirmed_at,
     });
+
+    // Kurangi salinan tersedia
+    
 
     return res.status(201).json({ msg: "Berhasil Reservasi" });
   } catch (error) {
@@ -60,12 +74,37 @@ async function confirmReservation(req, res) {
     const { status } = req.body;
 
     // Validasi status yang diizinkan
-    const allowedStatus = ["pending", "confirmed", "cancelled"];
+    const allowedStatus = ["pending", "confirmed", "cancelled", "returned"];
     if (!allowedStatus.includes(status)) {
       return res.status(400).json({ msg: "Status tidak valid" });
     }
 
-    // Siapkan data yang akan diupdate
+    // Ambil reservasi lama (buat cek status lama dan isbn yang benar)
+    const reservation = await Reservation.findOne({ where: { id: req.params.id } });
+    if (!reservation) {
+      return res.status(404).json({ msg: "Reservasi tidak ditemukan" });
+    }
+
+    // Ambil buku berdasarkan reservation.isbn, bukan dari req.body
+    const book = await Book.findOne({ where: { isbn: reservation.isbn } });
+    if (!book) {
+      return res.status(404).json({ msg: "Buku tidak ditemukan" });
+    }
+
+    // Update stok hanya kalau status berubah
+    if (reservation.status !== status) {
+      if (status === "confirmed") {
+        if (book.available_copies <= 0) {
+          return res.status(400).json({ msg: "Tidak ada salinan tersedia" });
+        }
+        book.available_copies -= 1;
+      } else if (status === "cancelled") {
+        book.available_copies += 1;
+      }
+      await book.save();
+    }
+
+    // Update reservasi
     const updatedData = {
       status,
       confirmed_at: status === "confirmed" ? new Date() : null,
@@ -84,21 +123,20 @@ async function confirmReservation(req, res) {
       });
     }
 
-    return res
-      .status(200)
-      .json({ msg: "Status reservasi berhasil diperbarui" });
+    return res.status(200).json({ msg: "Status reservasi berhasil diperbarui" });
   } catch (error) {
-    console.error("Update reservasi error:", error.message);
+    console.error("Update reservasi error:", error);
     return res.status(500).json({ msg: "Terjadi kesalahan server" });
   }
 }
 
+
+
 async function cancelReservation(req, res) {
   try {
     const { status } = req.body;
-
     // Validasi status yang diizinkan
-    const allowedStatus = ["pending", "confirmed", "cancelled"];
+    const allowedStatus = ["pending", "confirmed", "cancelled", "returned"];
     if (!allowedStatus.includes(status)) {
       return res.status(400).json({ msg: "Status tidak valid" });
     }
@@ -121,7 +159,7 @@ async function cancelReservation(req, res) {
         message: "Reservasi tidak ditemukan atau tidak diubah",
       });
     }
-
+    
     return res
       .status(200)
       .json({ msg: "Status reservasi berhasil diperbarui" });
@@ -140,6 +178,65 @@ async function deleteReservation(req, res) {
   }
 }
 
+async function returnBook(req, res) {
+  try {
+    const { status } = req.body;
+
+    // Validasi status yang diizinkan
+    const allowedStatus = ["pending", "confirmed", "cancelled", "returned"];
+    if (!allowedStatus.includes(status)) {
+      return res.status(400).json({ msg: "Status tidak valid" });
+    }
+
+    // Ambil reservasi lama (buat cek status lama dan isbn yang benar)
+    const reservation = await Reservation.findOne({ where: { id: req.params.id } });
+    if (!reservation) {
+      return res.status(404).json({ msg: "Reservasi tidak ditemukan" });
+    }
+
+    // Ambil buku berdasarkan reservation.isbn, bukan dari req.body
+    const book = await Book.findOne({ where: { isbn: reservation.isbn } });
+    if (!book) {
+      return res.status(404).json({ msg: "Buku tidak ditemukan" });
+    }
+
+    // Update stok hanya kalau status berubah
+    if (reservation.status !== status) {
+      if (status === "returned") {
+        if (book.available_copies <= 0) {
+          return res.status(400).json({ msg: "Tidak ada salinan tersedia" });
+        }
+        book.available_copies += 1;
+      } 
+      await book.save();
+    }
+
+    // Update reservasi
+    const updatedData = {
+      status,
+      returned_at: status === "returned" ? new Date() : null,
+    };
+
+    const result = await Reservation.update(updatedData, {
+      where: {
+        id: req.params.id,
+      },
+    });
+
+    if (result[0] === 0) {
+      return res.status(404).json({
+        status: "failed",
+        message: "Reservasi tidak ditemukan atau tidak diubah",
+      });
+    }
+
+    return res.status(200).json({ msg: "Status reservasi berhasil diperbarui" });
+  } catch (error) {
+    console.error("Update reservasi error:", error);
+    return res.status(500).json({ msg: "Terjadi kesalahan server" });
+  }
+}
+
 export {
   addReservation,
   getReservations,
@@ -147,4 +244,5 @@ export {
   confirmReservation,
   cancelReservation,
   deleteReservation,
+  returnBook
 };

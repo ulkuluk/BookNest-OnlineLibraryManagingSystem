@@ -7,7 +7,7 @@ Content-Type: application/json
 
 {
     "name": "user", 
-    "email": "user@user.com", 
+    "email": "alfi@alfi.com", 
     "phone": "087", 
     "password": "123",
     "role": "user"
@@ -29,12 +29,13 @@ Cookie: refreshToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywibmFtZSI6Im
 ###
 POST http://localhost:5000/add-book
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywibmFtZSI6ImFkbWluIiwiZW1haWwiOiJhZG1pbkBhZG1pbi5jb20iLCJwaG9uZSI6IjA4NyIsInJvbGUiOiJhZG1pbiIsImNyZWF0ZWRBdCI6IjIwMjUtMDUtMjBUMDY6MjA6MTkuMDAwWiIsInVwZGF0ZWRBdCI6IjIwMjUtMDUtMjRUMDc6MDk6NTYuMDAwWiIsImlhdCI6MTc0ODA3MDY3MiwiZXhwIjoxNzQ4MDcwNzAyfQ.Hx4tPkS6GIXoRWz7wdtBjub0dkXpN89zNDxSsqfmHZM
 
 {
-    "title": "cara menjadi programmer",
-    "author": "alfi",
-    "description": "belajar jadi programmer",
-    "isbn": "1234567890125",
+    "title": "tes",
+    "author": "tes",
+    "description": "tes",
+    "isbn": "1234567890126",
     "cover_url": "https://example.com/cover.jpg",
     "available_copies": 10,
     "total_copies": 10
@@ -74,3 +75,17 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywibmFtZSI6I
 {
     "status": "cancelled"
 }
+
+###
+POST http://localhost:5000/add-review
+Content-Type: application/json
+
+{
+    "email": "alfi@alfi.com",
+    "isbn": "1234567890125",
+    "rating": 5,
+    "comment": "bagus"
+}
+
+###
+GET http://localhost:5000/reviews/1234567890125

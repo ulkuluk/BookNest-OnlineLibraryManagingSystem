@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "../style/LoginStyle.css";
 import { FaSignInAlt } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { BASE_URL } from "../utils";
 
@@ -58,7 +58,7 @@ const LoginPage = () => {
             Masuk
           </button>
           <p className="signup-text">
-            Belum punya akun? <a href="#">Sign Up</a>
+            Belum punya akun? <Link to="/registration">Sign Up</Link>
           </p>
         </form>
       </div>

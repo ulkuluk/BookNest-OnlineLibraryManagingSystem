@@ -27,7 +27,7 @@ const Reservation = db.define(
       onDelete: "CASCADE",
     },
     status: {
-      type: DataTypes.ENUM("pending", "confirmed", "cancelled"),
+      type: DataTypes.ENUM("pending", "confirmed", "cancelled", "returned"),
       defaultValue: "pending",
       allowNull: false,
     },
@@ -36,6 +36,10 @@ const Reservation = db.define(
       defaultValue: Sequelize.NOW,
     },
     confirmed_at: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
+    returned_at: {
       type: DataTypes.DATE,
       allowNull: true,
     },
