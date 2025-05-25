@@ -93,7 +93,7 @@ const Dashboard = () => {
           </Link>
           <li>
             <Link to="/user-info">
-              <FaClipboardList className="icon" /> account
+              <FaClipboardList className="icon" /> Account
             </Link>
           </li>
           {role === "admin" && (

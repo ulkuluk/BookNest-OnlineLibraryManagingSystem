@@ -1,59 +1,267 @@
+/* Ganti font dari Inter ke Poppins */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+/* --- Global Styles --- */
+* {
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%;
+    margin: 0;
+    font-family: 'Poppins', sans-serif; /* Terapkan Poppins di body */
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+/* --- Review Page Layout --- */
 .review-page {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  background: linear-gradient(180deg, #388e3c, #2e7d32);
-  font-family: 'Inter', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
 }
 
 .review-container {
-  background-color: #fff;
-  padding: 40px;
-  border-radius: 12px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-  width: 400px;
-  text-align: center;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(10px);
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    width: 100%;
+    max-width: 480px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.review-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 15px;
+    background: linear-gradient(90deg, #667eea, #764ba2);
+    border-radius: 20px 20px 0 0;
 }
 
 .review-container h2 {
-  color: #2e7d32;
-  margin-bottom: 20px;
+    color: #2d3748;
+    margin-bottom: 30px;
+    font-size: 32px;
+    font-weight: 700;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-family: 'Poppins', sans-serif; /* Terapkan Poppins */
 }
 
 .review-form {
-  display: flex;
-  flex-direction: column;
+    display: flex;
+    flex-direction: column;
 }
 
 .review-form label {
-  text-align: left;
-  margin-bottom: 6px;
-  font-weight: 600;
-  color: #333;
+    text-align: left;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #4a5568;
+    font-size: 16px;
+    font-family: 'Poppins', sans-serif; /* Terapkan Poppins */
 }
 
+/* --- Styling untuk Bintang Rating --- */
+.star-rating {
+    display: flex;
+    justify-content: center; /* Pusatkan bintang */
+    gap: 5px; /* Jarak antar bintang */
+    margin-bottom: 25px; /* Jarak bawah konsisten dengan input lain */
+    font-size: 36px; /* Ukuran bintang lebih besar */
+    color: #ccc; /* Warna bintang default (belum diisi) */
+    cursor: pointer;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1); /* Sedikit shadow pada bintang */
+}
+
+.star {
+    transition: color 0.2s ease-in-out, transform 0.1s ease-in-out;
+}
+
+.star:hover {
+    transform: scale(1.1); /* Efek zoom saat hover */
+}
+
+.star.filled {
+    color: #ffd700; /* Warna kuning emas untuk bintang yang diisi */
+    text-shadow: 0 0 15px rgba(255, 215, 0, 0.5); /* Glowing effect */
+}
+
+/* --- Input dan Textarea (sudah konsisten dari sebelumnya) --- */
 .review-form input,
 .review-form textarea {
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  margin-bottom: 20px;
-  font-size: 14px;
-  resize: none;
+    padding: 12px;
+    border: 1px solid #ccd6e4;
+    border-radius: 10px;
+    margin-bottom: 25px;
+    font-size: 16px;
+    resize: vertical;
+    transition: all 0.3s ease;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+    font-family: 'Poppins', sans-serif; /* Terapkan Poppins */
 }
 
+.review-form input:focus,
+.review-form textarea:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2), inset 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* --- Tombol Submit (sudah konsisten dari sebelumnya) --- */
 .review-btn {
-  background-color: #2e7d32;
-  color: #fff;
-  border: none;
-  padding: 12px;
-  border-radius: 8px;
-  font-size: 15px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #fff;
+    border: none;
+    padding: 14px;
+    border-radius: 12px;
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
+    font-family: 'Poppins', sans-serif; /* Terapkan Poppins */
 }
 
 .review-btn:hover {
-  background-color: #1b5e20;
+    background: linear-gradient(135deg, #516be8 0%, #683e91 100%);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+}
+
+/* --- Responsive Design --- */
+@media (max-width: 600px) {
+    .review-page {
+        padding: 15px;
+    }
+
+    .review-container {
+        padding: 30px;
+        border-radius: 15px;
+    }
+
+    .review-container::before {
+        height: 10px;
+        border-radius: 15px 15px 0 0;
+    }
+
+    .review-container h2 {
+        font-size: 26px;
+        margin-bottom: 25px;
+    }
+
+    .review-form label {
+        font-size: 15px;
+    }
+
+    .star-rating {
+        font-size: 30px; /* Ukuran bintang lebih kecil di mobile */
+    }
+
+    .review-form input,
+    .review-form textarea {
+        padding: 10px;
+        font-size: 15px;
+        margin-bottom: 20px;
+        border-radius: 8px;
+    }
+
+    .review-btn {
+        padding: 12px;
+        font-size: 16px;
+        border-radius: 10px;
+    }
+}
+
+@media (max-width: 400px) {
+    .review-container {
+        padding: 25px;
+    }
+
+    .review-container h2 {
+        font-size: 22px;
+    }
+
+    .review-form input,
+    .review-form textarea {
+        margin-bottom: 15px;
+    }
+
+    .star-rating {
+        font-size: 28px;
+        gap: 3px;
+    }
+}
+
+/* Notifikasi Pop-up (Tambahan untuk ReviewStyle.css) */
+.notification-popup {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 15px 25px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 16px;
+  color: white;
+  z-index: 1000; /* Pastikan di atas elemen lain */
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  animation: slideIn 0.5s forwards, fadeOut 0.5s forwards 2.5s; /* Animasi masuk dan keluar */
+  font-family: 'Poppins', sans-serif; /* Terapkan Poppins */
+}
+
+.notification-popup.success {
+  background: linear-gradient(135deg, #48bb78 0%, #38a169 100%); /* Hijau untuk sukses */
+}
+
+.notification-popup.error {
+  background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%); /* Merah untuk gagal */
+}
+
+/* Animasi (Tambahan untuk ReviewStyle.css) */
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+/* Responsive Notifikasi */
+@media (max-width: 768px) {
+  .notification-popup {
+    top: 15px;
+    right: 15px;
+    left: 15px; /* Lebarkan notifikasi di layar kecil */
+    font-size: 14px;
+    padding: 12px 20px;
+    text-align: center;
+    justify-content: center;
+  }
 }

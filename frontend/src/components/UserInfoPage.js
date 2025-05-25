@@ -1,9 +1,17 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
-import { BASE_URL } from "../utils";
-import "../style/UserInfoStyle.css";
+import { BASE_URL } from "../utils"; // Pastikan BASE_URL Anda sudah benar
+import "../style/UserInfoStyle.css"; // Pastikan path CSS sudah benar
+import {
+  FaTachometerAlt,
+  FaBook,
+  FaClipboardList,
+  FaSignOutAlt,
+  FaCheckCircle, // Icon untuk sukses
+  FaTimesCircle, // Icon untuk error
+} from "react-icons/fa";
 
 const UserInfoPage = () => {
   const [name, setName] = useState("");
@@ -12,14 +20,31 @@ const UserInfoPage = () => {
   const [token, setToken] = useState("");
   const [expire, setExpire] = useState("");
   const [role, setRole] = useState("");
-  const [password, setPassword] = useState("");
+  const [password, setPassword] = useState(""); // Untuk password baru saat edit
   const [id, setId] = useState("");
   const [isEditing, setIsEditing] = useState(false);
+  const [notification, setNotification] = useState(null); // State untuk notifikasi { message, type }
+  const [showConfirmModal, setShowConfirmModal] = useState(false); // State baru untuk modal konfirmasi
   const navigate = useNavigate();
 
   useEffect(() => {
     refreshToken();
   }, []);
+
+  // Effect untuk menghilangkan notifikasi setelah beberapa detik
+  useEffect(() => {
+    if (notification) {
+      const timer = setTimeout(() => {
+        setNotification(null);
+      }, 3000); // Notifikasi akan hilang setelah 3 detik
+      return () => clearTimeout(timer); // Cleanup timer
+    }
+  }, [notification]);
+
+  // Fungsi helper untuk menampilkan notifikasi
+  const showNotification = (message, type) => {
+    setNotification({ message, type });
+  };
 
   const refreshToken = async () => {
     try {
@@ -33,9 +58,9 @@ const UserInfoPage = () => {
       setExpire(decoded.exp);
       setRole(decoded.role);
     } catch (error) {
-      console.log("gagal ngambil token", { error });
+      console.log("Gagal mengambil token atau sesi habis:", { error });
       if (error.response) {
-        navigate("/");
+        navigate("/"); // Redirect ke halaman login jika token tidak valid atau sesi habis
       }
     }
   };
@@ -72,8 +97,8 @@ const UserInfoPage = () => {
           name,
           email,
           phone,
-          password,
-          role,
+          password, // Sertakan password, kosong jika tidak diubah
+          role, // Perhatikan: role biasanya tidak diubah oleh user sendiri
         },
         {
           headers: {
@@ -81,81 +106,226 @@ const UserInfoPage = () => {
           },
         }
       );
-      alert("User updated successfully!");
+      showNotification("Profil berhasil diperbarui!", "success");
       setIsEditing(false);
+      setPassword(""); // Bersihkan field password setelah update
+      refreshToken(); // Ambil data terbaru (jika nama/email diubah)
     } catch (error) {
       console.error("Error updating user:", error);
-      alert("Failed to update user.");
+      // Cek error message spesifik jika ada, misal dari backend
+      const errorMessage = error.response?.data?.msg || "Gagal memperbarui profil. Silakan coba lagi.";
+      showNotification(errorMessage, "error");
     }
   };
 
-  const handleDelete = async () => {
-    if (window.confirm("Are you sure you want to delete your account?")) {
-      try {
-        await axios.delete(`${BASE_URL}/delete-user/${id}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        alert("Account deleted successfully.");
+  // Fungsi untuk menampilkan modal konfirmasi
+  const handleShowDeleteConfirm = () => {
+    setShowConfirmModal(true);
+  };
+
+  // Fungsi untuk membatalkan penghapusan (menutup modal)
+  const handleCancelDelete = () => {
+    setShowConfirmModal(false);
+  };
+
+  // Fungsi yang dipanggil setelah konfirmasi dari modal
+  const handleConfirmDelete = async () => {
+    setShowConfirmModal(false); // Tutup modal setelah dikonfirmasi
+    try {
+      await axios.delete(`${BASE_URL}/delete-user/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      showNotification("Akun berhasil dihapus.", "success");
+      // Clear local storage dan redirect setelah penghapusan berhasil
+      localStorage.clear();
+      // Beri sedikit jeda agar notifikasi terlihat sebelum redirect
+      setTimeout(() => {
         navigate("/");
-      } catch (error) {
-        console.error("Error deleting user:", error);
-        alert("Failed to delete account.");
-      }
+        window.location.reload(); // Memaksa refresh untuk membersihkan state
+      }, 1000); // Jeda 1 detik
+    } catch (error) {
+      console.error("Error deleting user:", error);
+      const errorMessage = error.response?.data?.msg || "Gagal menghapus akun. Silakan coba lagi.";
+      showNotification(errorMessage, "error");
+    }
+  };
+
+  const Logout = async () => {
+    try {
+      await axios.delete(`${BASE_URL}/logout`, { withCredentials: true });
+      localStorage.clear();
+      showNotification("Berhasil logout.", "success");
+      console.log("Logout success");
+      // Beri sedikit jeda agar notifikasi terlihat sebelum reload
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000); // Jeda 1 detik
+    } catch (error) {
+      console.log(error);
+      const errorMessage = error.response?.data?.msg || "Gagal logout. Silakan coba lagi.";
+      showNotification(errorMessage, "error");
     }
   };
 
   return (
-    <div className="user-info-container">
-      <h2>User Information</h2>
-      <form className="user-info-form">
-        <label>
-          Name
-          <input
-            type="text"
-            value={name}
-            disabled={!isEditing}
-            onChange={(e) => setName(e.target.value)}
-          />
-        </label>
-        <label>
-          Email
-          <input type="email" value={email} disabled />
-        </label>
-        <label>
-          Phone
-          <input
-            type="text"
-            value={phone}
-            disabled={!isEditing}
-            onChange={(e) => setPhone(e.target.value)}
-          />
-        </label>
-        <label>
-          Password
-          <input
-            type="password"
-            value={password}
-            disabled={!isEditing}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-        </label>
-        <input type="hidden" value={role} />
-      </form>
-      <div className="button-group">
-        {isEditing ? (
-          <button className="save-button" onClick={handleUpdate}>
-            Save
-          </button>
-        ) : (
-          <button className="edit-button" onClick={() => setIsEditing(true)}>
-            Edit
-          </button>
-        )}
-        <button className="delete-button" onClick={handleDelete}>
-          Delete
+    <div className="dashboard">
+      {/* Pop-up Notifikasi (Sukses/Gagal Operasi) */}
+      {notification && (
+        <div className={`notification-popup ${notification.type}`}>
+          {notification.type === "success" ? (
+            <FaCheckCircle className="notification-icon" />
+          ) : (
+            <FaTimesCircle className="notification-icon" />
+          )}
+          {notification.message}
+        </div>
+      )}
+
+      {/* Modal Konfirmasi Hapus Akun */}
+      {showConfirmModal && (
+        <div className="custom-modal-overlay">
+          <div className="custom-modal-content">
+            <h3 className="custom-modal-title">Konfirmasi Hapus Akun</h3>
+            <p className="custom-modal-message">
+              Apakah Anda yakin ingin menghapus akun Anda? Tindakan ini tidak dapat dibatalkan.
+            </p>
+            <div className="custom-modal-actions">
+              <button className="custom-modal-button custom-cancel-button" onClick={handleCancelDelete}>
+                Batal
+              </button>
+              <button className="custom-modal-button custom-confirm-button" onClick={handleConfirmDelete}>
+                Hapus Akun
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Sidebar */}
+      <div className="sidebar">
+        <h1 className="logo">BookNest</h1>
+        <ul className="nav-list">
+          <Link to="/">
+            <li>
+              <FaTachometerAlt className="icon" /> Dashboard
+            </li>
+          </Link>
+          <Link to="/reservation">
+            <li>
+              <FaBook className="icon" /> Reservation
+            </li>
+          </Link>
+          {/* Item ini akan tetap menjadi "Account" dan menunjuk ke halaman ini */}
+          <li>
+            <Link to="/user-info">
+              <FaClipboardList className="icon" /> Account
+            </Link>
+          </li>
+          {role === "admin" && (
+            <Link to="/reservation-admin">
+              <li>
+                <FaBook className="icon" /> Reservation (admin)
+              </li>
+            </Link>
+          )}
+        </ul>
+        <button onClick={Logout} className="logout">
+          <FaSignOutAlt className="icon" /> Logout
         </button>
+      </div>
+
+      {/* Main Content */}
+      <div className="main-content">
+        <div className="top-bar">
+          <div></div>
+          <div className="auth-links">
+            {name ? (
+              <span className="user-name">Hello, {name}</span>
+            ) : (
+              <>
+                <Link to="/registration" className="auth-link">
+                  Sign In
+                </Link>
+                <span className="separator">|</span>
+                <Link to="/login" className="auth-link">
+                  Login
+                </Link>
+              </>
+            )}
+          </div>
+        </div>
+
+        <div className="user-info-section">
+          <h2>Your Account Information</h2>
+          <div className="user-info-card">
+            <form className="user-info-form">
+              <label>
+                Name
+                <input
+                  type="text"
+                  value={name}
+                  disabled={!isEditing}
+                  onChange={(e) => setName(e.target.value)}
+                />
+              </label>
+              <label>
+                Email
+                <input type="email" value={email} disabled /> {/* Email biasanya tidak dapat diedit */}
+              </label>
+              <label>
+                Phone
+                <input
+                  type="text"
+                  value={phone}
+                  disabled={!isEditing}
+                  onChange={(e) => setPhone(e.target.value)}
+                />
+              </label>
+              <label>
+                Password (leave blank to keep current)
+                <input
+                  type="password"
+                  value={password}
+                  disabled={!isEditing}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder={isEditing ? "Enter new password" : "••••••••"}
+                />
+              </label>
+              {/* Input role disembunyikan karena biasanya tidak diedit oleh pengguna */}
+              <input type="hidden" value={role} />
+            </form>
+
+            <div className="button-group">
+              {isEditing ? (
+                <>
+                  <button className="save-button" onClick={handleUpdate}>
+                    Save Changes
+                  </button>
+                  <button
+                    className="cancel-edit-button"
+                    onClick={() => {
+                      setIsEditing(false);
+                      refreshToken(); // Kembalikan ke nilai awal jika dibatalkan
+                      setPassword(""); // Bersihkan field password
+                    }}
+                  >
+                    Cancel
+                  </button>
+                </>
+              ) : (
+                <button className="edit-button" onClick={() => setIsEditing(true)}>
+                  Edit Profile
+                </button>
+              )}
+              {/* Panggil fungsi untuk menampilkan modal konfirmasi */}
+              <button className="delete-button" onClick={handleShowDeleteConfirm}>
+                Delete Account
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

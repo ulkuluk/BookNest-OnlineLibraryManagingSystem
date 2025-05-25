@@ -1,59 +1,350 @@
-.reservation-page {
-  padding: 20px;
-  max-width: 1000px;
-  margin: auto;
-  font-family: "Segoe UI", sans-serif;
+/* Import font */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap'); /* Ganti Inter dan Montserrat ke Poppins */
+
+/* --- Global Styles --- */
+* {
+    box-sizing: border-box;
 }
 
-h2 {
-  text-align: center;
-  margin-bottom: 30px;
-  color: #333;
+html, body {
+    height: 100%;
+    margin: 0;
+    font-family: 'Poppins', sans-serif; /* Terapkan Poppins di body */
+    /* Gradient background yang lebih vibrant */
+    background: linear-gradient(135deg, #7452d0 0%, #462c8a 100%);
+    color: #e0e0e0; /* Warna teks default yang lebih terang */
+}
+
+/* --- Reservation Page Layout --- */
+.reservation-page {
+    padding: 60px 25px; /* Padding lebih besar */
+    max-width: 1400px; /* Lebar maksimum yang lebih besar */
+    margin: auto;
+    min-height: 100vh; /* Ensure it takes full viewport height */
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center content horizontally */
+    position: relative;
+    overflow: hidden;
+    font-family: 'Poppins', sans-serif; /* Terapkan Poppins di page container */
+}
+
+/* --- Title Styling --- */
+.reservation-page h2 {
+    text-align: center;
+    margin-bottom: 50px; /* Margin lebih besar */
+    font-size: 48px; /* Judul lebih besar dan berani */
+    font-weight: 800; /* Lebih tebal */
+    /* Gradient yang lebih kontras dan menarik */
+    background: linear-gradient(45deg, #FFD700, #FFA500, #FF6347); /* Gold-Orange-Tomato */
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: 0 5px 15px rgba(255, 165, 0, 0.4); /* Shadow yang lebih menonjol */
+    letter-spacing: 1.5px; /* Sedikit spasi antar huruf */
+    font-family: 'Poppins', sans-serif; /* Ganti font untuk judul ke Poppins */
 }
 
 .no-data {
-  text-align: center;
-  color: #777;
-  font-size: 18px;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.9); /* Lebih putih */
+    font-size: 22px; /* Lebih besar */
+    background: rgba(255, 255, 255, 0.1); /* Background lebih transparan */
+    padding: 30px 40px; /* Padding lebih besar */
+    border-radius: 20px; /* Radius lebih besar */
+    backdrop-filter: blur(15px); /* Blur lebih kuat */
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    font-weight: 500;
+    font-family: 'Poppins', sans-serif; /* Terapkan Poppins pada teks no-data */
 }
 
+/* --- Reservation Grid --- */
 .reservation-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Min-width lebih besar */
+    gap: 35px; /* Jarak antar kartu lebih besar */
+    width: 100%;
+    max-width: 1400px; /* Menyesuaikan dengan max-width halaman */
 }
 
+/* --- Reservation Card Styling (Glassmorphism + Subtle Details) --- */
 .reservation-card {
-  border: 1px solid #ddd;
-  border-radius: 12px;
-  overflow: hidden;
-  background-color: #fefefe;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  transition: transform 0.2s;
+    background: rgba(255, 255, 255, 0.08); /* Background lebih transparan */
+    backdrop-filter: blur(20px); /* Blur yang sangat kuat */
+    border-radius: 25px; /* Radius lebih besar */
+    overflow: hidden;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25); /* Shadow lebih kuat */
+    transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.4s ease-in-out; /* Transisi lebih halus */
+    border: 1px solid rgba(255, 255, 255, 0.4); /* Border yang lebih jelas */
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    /* Tambahkan background default untuk area gambar jika gambar belum dimuat atau tidak ada */
+    background-color: #333; /* Warna gelap default untuk area cover */
+    font-family: 'Poppins', sans-serif; /* Terapkan Poppins pada reservation card */
+}
+
+/* Efek garis gradient di atas kartu */
+.reservation-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 8px; /* Lebih tipis */
+    background: linear-gradient(90deg, #8A2BE2, #9932CC, #BA55D3); /* Gradien ungu */
+    border-radius: 25px 25px 0 0;
+    opacity: 0; /* Awalnya tidak terlihat */
+    transition: opacity 0.4s ease-in-out;
+    z-index: 2; /* Pastikan di atas gambar jika ada overlap */
 }
 
 .reservation-card:hover {
-  transform: translateY(-5px);
+    transform: translateY(-12px); /* Lift yang lebih dramatis */
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35); /* Shadow lebih kuat saat hover */
+}
+
+.reservation-card:hover::before {
+    opacity: 1; /* Muncul saat hover */
 }
 
 .book-cover-reservation {
-  width: 100%;
-  height: 320px;
-  object-fit: cover;
+    width: 100%;
+    height: 420px; /* Tinggi cover lebih dramatis */
+    object-fit: cover;
+    border-radius: 25px 25px 0 0; /* Radius sesuai kartu */
+    /* Menghapus filter brightness/contrast di sini agar warna latar belakang bisa lebih menonjol */
+    /* filter: brightness(0.9) contrast(1.1); */
+    transition: transform 0.3s ease, filter 0.3s ease; /* Transisi untuk filter */
+    position: relative;
+    z-index: 1; /* Pastikan gambar di bawah pseudo-element garis */
+
+    /* Latar belakang cover yang berbeda dari warna body */
+    background-color: #2b2b2b; /* Warna abu-abu gelap untuk background cover */
+    /* Anda bisa bereksperimen dengan warna lain: #4a3857 (ungu gelap), #3a4750 (biru keabu-abuan) */
+    background-image: /* Pola abstrak atau gradient tipis bisa ditambahkan */
+        radial-gradient(circle at center, rgba(255,255,255,0.05) 1px, transparent 1px);
+    background-size: 20px 20px; /* Ukuran titik-titik pada background */
+}
+
+.reservation-card:hover .book-cover-reservation {
+    /* Filter untuk memberikan sedikit efek saat hover, misalnya saturate */
+    filter: saturate(1.1);
+    transform: scale(1.02); /* Sedikit zoom saat hover */
 }
 
 .reservation-info {
-  padding: 15px;
+    padding: 25px; /* Padding lebih besar */
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background: rgba(0, 0, 0, 0.15); /* Background info yang sedikit lebih gelap dan transparan */
+    border-radius: 0 0 25px 25px; /* Radius bawah sesuai kartu */
+    box-shadow: inset 0 5px 10px rgba(0, 0, 0, 0.15); /* Inner shadow lebih kuat */
 }
 
 .reservation-info h3 {
-  margin: 0 0 10px;
-  font-size: 20px;
-  color: #222;
+    margin: 0 0 18px; /* Margin lebih besar */
+    font-size: 28px; /* Ukuran font lebih besar */
+    color: #FFFFFF; /* Judul buku putih murni */
+    font-weight: 700;
+    text-shadow: 0 3px 8px rgba(0, 0, 0, 0.3); /* Shadow lebih kuat */
+    letter-spacing: 0.5px;
+    font-family: 'Poppins', sans-serif; /* Ganti font untuk judul buku ke Poppins */
 }
 
 .reservation-info p {
-  margin: 5px 0;
-  color: #555;
-  font-size: 14px;
+    margin: 10px 0; /* Jarak lebih besar antar paragraf */
+    color: rgba(255, 255, 255, 0.95); /* Teks lebih terang dan jelas */
+    font-size: 17px; /* Ukuran font lebih besar */
+    line-height: 1.5; /* Line height lebih nyaman dibaca */
+    font-family: 'Poppins', sans-serif; /* Ganti font untuk detail ke Poppins */
+}
+
+.reservation-info p strong {
+    color: #FFD700; /* Warna Gold untuk highlight */
+    font-weight: 700;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    font-family: 'Poppins', sans-serif; /* Terapkan Poppins pada bold text */
+}
+
+/* Status specific styling */
+.reservation-info p strong:nth-of-type(3) { /* Targeting the Status strong tag */
+    font-weight: 800; /* Lebih tebal untuk status */
+}
+
+.reservation-info p:has(strong:contains("Status:")) { /* Targeting paragraph containing "Status:" */
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Space between "Status:" and actual status */
+}
+
+.reservation-info p:has(strong:contains("Status:")) span {
+    font-weight: 600;
+    padding: 5px 12px;
+    border-radius: 10px;
+    color: white;
+    font-size: 15px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    font-family: 'Poppins', sans-serif; /* Terapkan Poppins pada status span */
+}
+
+/* Warna untuk status */
+.reservation-info p:has(strong:contains("Status:")) span:contains("Pending") {
+    background: linear-gradient(45deg, #FFC107, #FFA000); /* Orange */
+}
+
+.reservation-info p:has(strong:contains("Status:")) span:contains("Approved") {
+    background: linear-gradient(45deg, #4CAF50, #2E7D32); /* Green */
+}
+
+.reservation-info p:has(strong:contains("Status:")) span:contains("Returned") {
+    background: linear-gradient(45deg, #2196F3, #1976D2); /* Blue */
+}
+
+.reservation-info p:has(strong:contains("Status:")) span:contains("Cancelled") {
+    background: linear-gradient(45deg, #F44336, #D32F2F); /* Red */
+}
+
+
+/* --- Responsive Design --- */
+@media (max-width: 1200px) {
+    .reservation-page {
+        padding: 50px 20px;
+    }
+    .reservation-page h2 {
+        font-size: 42px;
+        margin-bottom: 40px;
+    }
+    .reservation-grid {
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 30px;
+    }
+    .reservation-card {
+        border-radius: 20px;
+    }
+    .book-cover-reservation {
+        height: 380px;
+    }
+    .reservation-info h3 {
+        font-size: 26px;
+    }
+    .reservation-info p {
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 992px) {
+    .reservation-page {
+        padding: 40px 15px;
+    }
+    .reservation-page h2 {
+        font-size: 36px;
+        margin-bottom: 35px;
+    }
+    .reservation-grid {
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 25px;
+    }
+    .reservation-card {
+        border-radius: 18px;
+    }
+    .book-cover-reservation {
+        height: 340px;
+    }
+    .reservation-info {
+        padding: 20px;
+    }
+    .reservation-info h3 {
+        font-size: 22px;
+        margin-bottom: 15px;
+    }
+    .reservation-info p {
+        font-size: 15px;
+    }
+    .no-data {
+        font-size: 20px;
+        padding: 25px 30px;
+    }
+}
+
+@media (max-width: 768px) {
+    .reservation-page {
+        padding: 30px 10px;
+    }
+    .reservation-page h2 {
+        font-size: 32px;
+        margin-bottom: 30px;
+    }
+    .reservation-grid {
+        grid-template-columns: 1fr; /* Single column on small screens */
+        max-width: 420px; /* Constrain width for single column */
+        margin: auto;
+    }
+    .reservation-card {
+        flex-direction: row; /* Layout image and info side-by-side */
+        border-radius: 15px;
+        height: 200px; /* Fixed height for row layout */
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    }
+    .book-cover-reservation {
+        width: 140px; /* Fixed width for cover in row layout */
+        height: 100%; /* Fill card height */
+        border-radius: 15px 0 0 15px; /* Round left corners */
+        object-fit: cover;
+    }
+    .reservation-info {
+        padding: 18px;
+        justify-content: center; /* Center content vertically in info part */
+        border-radius: 0 15px 15px 0; /* Round right corners */
+    }
+    .reservation-info h3 {
+        font-size: 20px;
+        margin-bottom: 10px;
+    }
+    .reservation-info p {
+        font-size: 14px;
+        margin: 6px 0;
+    }
+    .no-data {
+        font-size: 18px;
+        padding: 20px 25px;
+    }
+
+    .reservation-info p strong:nth-of-type(3) { /* Targeting the Status strong tag */
+        font-weight: 700; /* Slightly less bold for mobile */
+    }
+    .reservation-info p:has(strong:contains("Status:")) span {
+        padding: 4px 10px;
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    .reservation-page h2 {
+        font-size: 28px;
+    }
+    .reservation-card {
+        height: 180px; /* Smaller height for very small screens */
+    }
+    .book-cover-reservation {
+        width: 120px; /* Smaller cover width */
+    }
+    .reservation-info {
+        padding: 15px;
+    }
+    .reservation-info h3 {
+        font-size: 18px;
+    }
+    .reservation-info p {
+        font-size: 13px;
+    }
+    .no-data {
+        font-size: 16px;
+        padding: 15px 20px;
+    }
 }

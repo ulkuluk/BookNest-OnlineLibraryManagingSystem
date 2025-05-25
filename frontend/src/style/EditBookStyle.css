@@ -1,56 +1,340 @@
-.edit-book-container {
-  max-width: 500px;
-  margin: 60px auto;
-  padding: 30px;
-  background-color: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+/* Import font */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+/* --- Global Styles --- */
+* {
+  box-sizing: border-box;
 }
 
-.edit-book-container h2 {
+html, body {
+  height: 100%;
+  margin: 0;
+  font-family: 'Poppins', sans-serif; /* Ganti ke Poppins */
+  /* Global background consistent with other standalone pages */
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+/* --- Standalone Page Container --- */
+.edit-book-page-standalone {
+  display: flex;
+  flex-direction: column; /* Ubah ke kolom agar tombol kembali di atas */
+  justify-content: center; /* Center the card horizontally */
+  align-items: center;     /* Center the card vertically */
+  min-height: 100vh;       /* Take full viewport height */
+  padding: 20px;           /* Padding around the card */
+  position: relative; /* Penting untuk notifikasi */
+}
+
+/* Back button container */
+.back-button-container {
+    width: 100%;
+    max-width: 600px; /* Sesuaikan dengan max-width card */
+    margin-bottom: 20px; /* Jarak antara tombol kembali dan card */
+    text-align: left; /* Posisikan tombol kembali ke kiri */
+}
+
+/* Back Button Styling (mirip BookDetailStyle.css) */
+.back-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 25px;
+  background: linear-gradient(45deg, #667eea, #764ba2);
+  color: white;
+  font-weight: 600;
+  font-size: 16px;
+  border-radius: 12px;
+  text-decoration: none;
+  box-shadow: 0 6px 18px rgba(102, 126, 234, 0.4);
+  transition: background 0.3s ease, transform 0.3s ease;
+  font-family: 'Poppins', sans-serif;
+}
+
+.back-button:hover {
+  background: linear-gradient(45deg, #5a67d8, #6b46c1);
+  transform: translateY(-3px);
+  color: #ffd700;
+}
+
+/* --- Edit Book Card (same as previous, just placed within new standalone container) --- */
+.edit-book-card {
+  background: rgba(255, 255, 255, 0.9); /* Glassmorphism background */
+  backdrop-filter: blur(10px);
+  padding: 40px; /* Increased padding */
+  border-radius: 20px; /* Consistent border radius */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15); /* Consistent shadow */
+  width: 100%;
+  max-width: 600px; /* Wider for more form fields */
+  border: 1px solid rgba(255, 255, 255, 0.3); /* Consistent border */
+  position: relative;
+  overflow: hidden;
+  text-align: center; /* Center content like the title */
+}
+
+.edit-book-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 15px; /* Accent line at the top */
+  background: linear-gradient(90deg, #667eea, #764ba2); /* Consistent gradient accent */
+  border-radius: 20px 20px 0 0;
+}
+
+.edit-book-card h2 { /* Targeting h2 specifically inside the card */
+  font-size: 32px;
+  color: #2d3748;
+  margin-bottom: 30px;
+  font-weight: 700;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
   text-align: center;
-  color: #388e3c;
-  margin-bottom: 25px;
 }
 
 .edit-book-form {
   display: flex;
   flex-direction: column;
+  gap: 20px; /* Space between form groups */
+  text-align: left; /* Align form labels/inputs to the left within the form */
 }
 
 .edit-book-form label {
-  margin-bottom: 15px;
   font-weight: 600;
-  color: #333;
+  color: #4a5568; /* Consistent label color */
+  font-size: 16px;
+  display: flex;
+  flex-direction: column;
 }
 
-.edit-book-form input {
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  font-size: 14px;
-  margin-top: 5px;
-  transition: border-color 0.3s ease;
+.edit-book-form input,
+.edit-book-form textarea {
+  padding: 12px;
+  border: 1px solid #ccd6e4; /* Consistent border */
+  border-radius: 10px; /* Consistent border radius */
+  margin-top: 8px; /* Space between label and input */
+  font-size: 16px;
+  background-color: #f7fafc; /* Light background for inputs */
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05); /* Consistent inner shadow */
+  transition: all 0.3s ease;
+  resize: vertical; /* Allow vertical resize for textarea */
+  font-family: 'Poppins', sans-serif; /* Terapkan Poppins */
 }
 
-.edit-book-form input:focus {
-  border-color: #388e3c;
+.edit-book-form input:focus,
+.edit-book-form textarea:focus {
   outline: none;
+  border-color: #667eea; /* Consistent focus color */
+  background-color: white;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2), inset 0 2px 4px rgba(0, 0, 0, 0.08);
+}
+
+/* Specific style for readOnly ISBN input */
+.edit-book-form input[readOnly] {
+  background-color: #edf2f7; /* Lighter background for read-only */
+  color: #718096; /* Greyer text for read-only */
+  cursor: not-allowed;
+  box-shadow: none;
+  opacity: 0.9;
 }
 
 .submit-button {
-  background-color: #388e3c;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); /* Consistent button gradient */
   color: white;
   border: none;
-  padding: 12px;
-  border-radius: 6px;
-  font-size: 15px;
+  padding: 14px 25px; /* Increased padding */
+  border-radius: 12px; /* Consistent border radius */
+  font-size: 18px; /* Increased font size */
   font-weight: 600;
   cursor: pointer;
-  margin-top: 20px;
-  transition: background-color 0.3s ease;
+  margin-top: 30px; /* More space above button */
+  transition: all 0.3s ease;
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3); /* Consistent button shadow */
+  font-family: 'Poppins', sans-serif; /* Terapkan Poppins */
 }
 
 .submit-button:hover {
-  background-color: #2e7d32;
+  background: linear-gradient(135deg, #516be8 0%, #683e91 100%); /* Darker gradient on hover */
+  transform: translateY(-3px); /* Consistent lift effect */
+  box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4); /* Stronger shadow on hover */
+}
+
+/* Notifikasi Pop-up (Revisi Final, sama seperti BookDetailStyle.css) */
+.notification-popup {
+  position: fixed;
+  top: 30px;
+  right: 30px;
+  padding: 15px 25px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 16px;
+  color: white;
+  z-index: 1000;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 250px;
+  justify-content: flex-start;
+  animation: slideInFromRight 0.5s forwards, fadeOutToRight 0.5s forwards 2.5s;
+  opacity: 0;
+  transform: translateX(100%);
+  overflow: hidden;
+  font-family: 'Poppins', sans-serif; /* Terapkan Poppins */
+}
+
+.notification-popup.success {
+  background: linear-gradient(to right, #28a745, #218838); /* Gradien hijau */
+}
+
+.notification-popup.error {
+  background: linear-gradient(to right, #dc3545, #c82333); /* Gradien merah */
+}
+
+.notification-icon {
+  font-size: 22px;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* Animasi Masuk dan Keluar yang Lebih Halus */
+@keyframes slideInFromRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOutToRight {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+
+/* --- Responsive Design --- */
+@media (max-width: 992px) {
+  .edit-book-card {
+    padding: 30px;
+    border-radius: 15px;
+  }
+
+  .edit-book-card::before {
+    height: 10px;
+    border-radius: 15px 15px 0 0;
+  }
+
+  .edit-book-card h2 {
+    font-size: 28px;
+  }
+
+  .edit-book-form label {
+    font-size: 15px;
+  }
+
+  .edit-book-form input,
+  .edit-book-form textarea {
+    padding: 10px;
+    font-size: 15px;
+    border-radius: 8px;
+  }
+
+  .submit-button {
+    padding: 12px 20px;
+    font-size: 16px;
+    border-radius: 10px;
+    margin-top: 25px;
+  }
+
+  .back-button-container {
+    max-width: 500px; /* Sesuaikan agar konsisten dengan card yang mengecil */
+  }
+}
+
+@media (max-width: 768px) {
+  .edit-book-page-standalone {
+    padding: 15px;
+  }
+
+  .edit-book-card {
+    padding: 25px;
+  }
+
+  .edit-book-card h2 {
+    font-size: 26px;
+  }
+
+  .edit-book-form {
+    gap: 15px;
+  }
+
+  .submit-button {
+    margin-top: 20px;
+  }
+
+  /* Responsive Notifikasi */
+  .notification-popup {
+    top: 20px;
+    right: 20px;
+    left: 20px; /* Lebarkan notifikasi di layar kecil */
+    font-size: 14px;
+    padding: 12px 20px;
+    text-align: center;
+    justify-content: center;
+    min-width: unset; /* Hapus min-width di layar kecil */
+    border-radius: 8px; /* Radius lebih kecil untuk mobile */
+  }
+  .notification-icon {
+    font-size: 20px;
+  }
+
+  .back-button-container {
+    max-width: 400px; /* Sesuaikan lagi */
+  }
+}
+
+@media (max-width: 480px) {
+  .edit-book-page-standalone {
+    padding: 10px;
+  }
+
+  .edit-book-card {
+    padding: 20px;
+  }
+
+  .edit-book-card h2 {
+    font-size: 22px;
+    margin-bottom: 20px;
+  }
+
+  .edit-book-form label {
+    font-size: 14px;
+  }
+
+  .edit-book-form input,
+  .edit-book-form textarea {
+    padding: 10px;
+    font-size: 14px;
+    margin-bottom: 15px;
+  }
+
+  .submit-button {
+    padding: 10px 15px;
+    font-size: 15px;
+    margin-top: 15px;
+  }
+
+  .back-button-container {
+    max-width: 300px; /* Sesuaikan lagi */
+  }
 }

@@ -203,9 +203,7 @@ async function returnBook(req, res) {
     // Update stok hanya kalau status berubah
     if (reservation.status !== status) {
       if (status === "returned") {
-        if (book.available_copies <= 0) {
-          return res.status(400).json({ msg: "Tidak ada salinan tersedia" });
-        }
+        
         book.available_copies += 1;
       } 
       await book.save();
