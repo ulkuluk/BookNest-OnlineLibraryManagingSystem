@@ -2,7 +2,7 @@ import React, { useEffect, useState, useMemo } from "react"; // Added useMemo
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import { BASE_URL } from "../utils";
-import "../style/ReservationAdminStyle.css";
+import "../style/ReservationAdminStyle.css"; // Tetap impor CSS ini
 import {
   FaTachometerAlt,
   FaBook,
@@ -21,52 +21,10 @@ const ReservationAdminPage = () => {
   const [searchId, setSearchId] = useState("");
   const navigate = useNavigate();
 
-  // Use useMemo for axiosJWT to ensure interceptors are not added multiple times
-  const axiosJWT = useMemo(() => {
-    const instance = axios.create();
-
-    instance.interceptors.request.use(
-      async (config) => {
-        const currentDate = new Date();
-        // Only refresh token if it's expired
-        if (expire && expire * 1000 < currentDate.getTime()) {
-          try {
-            const response = await axios.get(`${BASE_URL}/token`);
-            config.headers.Authorization = `Bearer ${response.data.accessToken}`;
-            setToken(response.data.accessToken);
-            const decoded = jwtDecode(response.data.accessToken);
-            setName(decoded.name);
-            setEmail(decoded.email);
-            setRole(decoded.role);
-            setExpire(decoded.exp);
-          } catch (error) {
-            // If token refresh fails, log out and redirect to home
-            console.error("Failed to refresh token, logging out:", error);
-            localStorage.clear();
-            navigate("/"); // Only navigate to home if token refresh utterly fails
-            window.location.reload();
-            return Promise.reject(error); // Reject the request
-          }
-        } else if (token) { // If token exists and is not expired, use it
-          config.headers.Authorization = `Bearer ${token}`;
-        }
-        return config;
-      },
-      (error) => Promise.reject(error)
-    );
-    return instance;
-  }, [token, expire, navigate]); // Depend on token, expire, and navigate
-
   useEffect(() => {
+    fetchReservations();
     refreshToken(); // Initial token refresh on component mount
   }, []); // Empty dependency array means this runs once
-
-  useEffect(() => {
-    if (token) {
-      // Only fetch reservations if token is available
-      fetchReservations();
-    }
-  }, [token, axiosJWT]); // Re-fetch when token or axiosJWT instance changes
 
   const refreshToken = async () => {
     try {
@@ -78,12 +36,37 @@ const ReservationAdminPage = () => {
       setRole(decoded.role);
       setExpire(decoded.exp);
     } catch (error) {
-      console.error("Gagal mengambil token, mengarahkan ke halaman login:", error);
+      console.error(
+        "Gagal mengambil token, mengarahkan ke halaman login:",
+        error
+      );
       if (error.response) {
         navigate("/"); // Navigate to home if initial token fetch fails (e.g., no session)
       }
     }
   };
+
+  const axiosJWT = axios.create();
+
+  axiosJWT.interceptors.request.use(
+    async (config) => {
+      const currentDate = new Date();
+      if (expire * 1000 < currentDate.getTime()) {
+        const response = await axios.get(`${BASE_URL}/token`);
+        config.headers.Authorization = `Bearer ${response.data.accessToken}`;
+        setToken(response.data.accessToken);
+        const decoded = jwtDecode(response.data.accessToken);
+        setExpire(decoded.exp);
+        setRole(decoded.role);
+      } else {
+        config.headers.Authorization = `Bearer ${token}`; // <== Tambahkan ini
+      }
+      return config;
+    },
+    (error) => {
+      return Promise.reject(error);
+    }
+  );
 
   const fetchReservations = async () => {
     try {
@@ -97,7 +80,10 @@ const ReservationAdminPage = () => {
 
   const confirmHandler = async (id, status) => {
     try {
-      await axiosJWT.put(`${BASE_URL}/confirm-reservation/${id}`, { status });
+      await axiosJWT.put(
+        `${BASE_URL}/confirm-reservation/${id}`,
+        { status }
+      );
       fetchReservations();
     } catch (error) {
       console.error("Failed to update reservation:", error);
@@ -106,7 +92,10 @@ const ReservationAdminPage = () => {
 
   const cancelHandler = async (id, status) => {
     try {
-      await axiosJWT.put(`${BASE_URL}/cancel-reservation/${id}`, { status });
+      await axiosJWT.put(
+        `${BASE_URL}/cancel-reservation/${id}`,
+        { status }
+      );
       fetchReservations();
     } catch (error) {
       console.error("Failed to update reservation:", error);
@@ -115,7 +104,12 @@ const ReservationAdminPage = () => {
 
   const returnHandler = async (id) => {
     try {
-      await axiosJWT.put(`${BASE_URL}/return-book/${id}`, { status: "returned" });
+      await axiosJWT.put(
+        `${BASE_URL}/return-book/${id}`,
+        {
+          status: "returned",
+        }
+      );
       fetchReservations();
     } catch (error) {
       console.error("Failed to update reservation to returned:", error);
@@ -140,11 +134,14 @@ const ReservationAdminPage = () => {
   );
   const confirmedReservations = reservations.filter(
     (item) =>
-      item.status === "confirmed" && item.id.toString().includes(searchId.trim())
+      item.status === "confirmed" &&
+      item.id.toString().includes(searchId.trim())
   );
 
   return (
-    <div className="dashboard"> {/* Reverted to 'dashboard' class */}
+    <div className="dashboard">
+      {" "}
+      {/* Tetap menggunakan 'dashboard' class */}
       {/* Sidebar */}
       <div className="sidebar">
         <h1 className="logo">BookNest</h1>
@@ -166,7 +163,9 @@ const ReservationAdminPage = () => {
           </li>
           {role === "admin" && (
             <Link to="/reservation-admin">
-              <li className="active"> {/* Added 'active' class for visual feedback */}
+              <li className="active">
+                {" "}
+                {/* Added 'active' class for visual feedback */}
                 <FaBook className="icon" /> Reservation (admin)
               </li>
             </Link>
@@ -176,9 +175,10 @@ const ReservationAdminPage = () => {
           <FaSignOutAlt className="icon" /> Logout
         </button>
       </div>
-
       {/* Main Content */}
-      <div className="main-content"> {/* Reverted to 'main-content' class */}
+      <div className="main-content">
+        {" "}
+        {/* Tetap menggunakan 'main-content' class */}
         <div className="top-bar">
           <div></div>
           <div className="auth-links">
@@ -197,7 +197,6 @@ const ReservationAdminPage = () => {
             )}
           </div>
         </div>
-
         <div className="reservation-admin-header">
           <h2>Reservation Management</h2>
           <div className="search-container">
@@ -210,28 +209,54 @@ const ReservationAdminPage = () => {
             />
           </div>
         </div>
-
         <div className="reservation-sections">
           <section className="pending-reservations">
             <h3>Pending Reservations</h3>
             {pendingReservations.length === 0 ? (
               <p className="no-data">No pending reservations.</p>
             ) : (
-              <div className="reservation-grid">
+              <div className="reservation-grid"> {/* class ini tetap ada */}
                 {pendingReservations.map((item) => (
-                  <div key={item.id} className="reservation-card">
+                  <div key={item.id} className="reservation-card"> {/* class ini tetap ada */}
                     <img
                       src={item.book?.cover_url}
                       alt={item.book?.title}
-                      className="book-cover"
+                      className="book-cover-reservation" // UBAH CLASS INI
                     />
-                    <div className="reservation-info">
+                    <div className="reservation-info"> {/* class ini tetap ada */}
                       <h3>{item.book?.title}</h3>
-                      <p><strong>Reservation ID:</strong> {item.id}</p>
-                      <p><strong>ISBN:</strong> {item.book?.isbn}</p>
-                      <p><strong>User:</strong> {item.email}</p>
-                      <p className={`status ${item.status}`}><strong>Status:</strong> {item.status}</p>
-                      <p><strong>Available Copies:</strong> {item.book?.available_copies}</p>
+                      <p>
+                        <strong>Reservation ID:</strong> {item.id}
+                      </p>
+                      <p>
+                        <strong>ISBN:</strong> {item.book?.isbn}
+                      </p>
+                      <p>
+                        <strong>User:</strong> {item.email}
+                      </p>
+                      {/* UBAH STRUKTUR P STATUS INI */}
+                      <p>
+                        <strong>Status:</strong>{" "}
+                        <span
+                          className={
+                            item.status === "pending"
+                              ? "Pending"
+                              : item.status === "confirmed"
+                              ? "Approved"
+                              : item.status === "returned"
+                              ? "Returned"
+                              : item.status === "cancelled"
+                              ? "Cancelled"
+                              : ""
+                          }
+                        >
+                          {item.status}
+                        </span>
+                      </p>
+                      <p>
+                        <strong>Available Copies:</strong>{" "}
+                        {item.book?.available_copies}
+                      </p>
 
                       <div className="admin-buttons">
                         <button
@@ -259,21 +284,48 @@ const ReservationAdminPage = () => {
             {confirmedReservations.length === 0 ? (
               <p className="no-data">No confirmed reservations.</p>
             ) : (
-              <div className="reservation-grid">
+              <div className="reservation-grid"> {/* class ini tetap ada */}
                 {confirmedReservations.map((item) => (
-                  <div key={item.id} className="reservation-card">
+                  <div key={item.id} className="reservation-card"> {/* class ini tetap ada */}
                     <img
                       src={item.book?.cover_url}
                       alt={item.book?.title}
-                      className="book-cover"
+                      className="book-cover-reservation" // UBAH CLASS INI
                     />
-                    <div className="reservation-info">
+                    <div className="reservation-info"> {/* class ini tetap ada */}
                       <h3>{item.book?.title}</h3>
-                      <p><strong>Reservation ID:</strong> {item.id}</p>
-                      <p><strong>ISBN:</strong> {item.book?.isbn}</p>
-                      <p><strong>User:</strong> {item.email}</p>
-                      <p className={`status ${item.status}`}><strong>Status:</strong> {item.status}</p>
-                      <p><strong>Available Copies:</strong> {item.book?.available_copies}</p>
+                      <p>
+                        <strong>Reservation ID:</strong> {item.id}
+                      </p>
+                      <p>
+                        <strong>ISBN:</strong> {item.book?.isbn}
+                      </p>
+                      <p>
+                        <strong>User:</strong> {item.email}
+                      </p>
+                      {/* UBAH STRUKTUR P STATUS INI */}
+                      <p>
+                        <strong>Status:</strong>{" "}
+                        <span
+                          className={
+                            item.status === "pending"
+                              ? "Pending"
+                              : item.status === "confirmed"
+                              ? "Approved"
+                              : item.status === "returned"
+                              ? "Returned"
+                              : item.status === "cancelled"
+                              ? "Cancelled"
+                              : ""
+                          }
+                        >
+                          {item.status}
+                        </span>
+                      </p>
+                      <p>
+                        <strong>Available Copies:</strong>{" "}
+                        {item.book?.available_copies}
+                      </p>
 
                       <div className="admin-buttons">
                         <button

@@ -1,5 +1,5 @@
 /* Ganti font dari Inter ke Poppins */
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+@import url('https://fonts.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
 
 * {
   box-sizing: border-box;
@@ -7,7 +7,7 @@
 
 body {
   margin: 0;
-  font-family: 'Poppins', sans-serif; /* Terapkan Poppins di body */
+  font-family: 'Poppins', sans-serif;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   min-height: 100vh;
   color: #333;
@@ -21,7 +21,7 @@ body {
   box-shadow: 0 12px 30px rgba(102, 126, 234, 0.3);
   border-radius: 20px;
   position: relative;
-  font-family: 'Poppins', sans-serif; /* Terapkan Poppins juga di container ini */
+  font-family: 'Poppins', sans-serif;
 }
 
 .back-button {
@@ -38,7 +38,7 @@ body {
   text-decoration: none;
   box-shadow: 0 6px 18px rgba(102, 126, 234, 0.4);
   transition: background 0.3s ease, transform 0.3s ease;
-  font-family: 'Poppins', sans-serif; /* Terapkan Poppins */
+  font-family: 'Poppins', sans-serif;
 }
 
 .back-button:hover {
@@ -49,42 +49,46 @@ body {
 
 .book-detail-card {
   display: flex;
-  flex-wrap: wrap; /* Memastikan responsif */
+  flex-wrap: wrap;
   gap: 40px;
-  align-items: flex-start; /* Mengatur item ke atas */
-  margin-bottom: 40px; /* Tambah sedikit margin bawah */
+  /* Kembali ke align-items: flex-start; untuk sementara sampai kita pastikan gambarnya muncul */
+  align-items: flex-start;
+  margin-bottom: 40px;
 }
 
-/* Wadah baru untuk gambar cover - Menggunakan rasio aspek yang mungkin lebih tinggi */
+/* Wadah baru untuk gambar cover */
 .book-cover-wrapper {
-  flex-shrink: 0; /* Agar tidak menyusut */
-  width: 250px; /* Lebar dasar wadah gambar */
-  position: relative; /* Penting untuk padding-bottom dan posisi absolut */
+  flex-shrink: 0;
+  width: 250px;
+  /* Pertahankan padding-bottom untuk rasio aspek default di desktop */
   padding-bottom: calc(250px * 1.5); /* Rasio aspek 2:3 (tinggi 1.5x dari lebar) */
+  position: relative;
   border-radius: 20px;
-  background-color: #f0f0f0; /* Warna latar belakang jika gambar transparan */
+  background-color: #f0f0f0; /* Pastikan ada warna latar belakang */
   box-shadow: 0 10px 30px rgba(102, 126, 234, 0.35);
-  overflow: hidden; /* Pastikan tidak ada yang meluber */
+  overflow: hidden;
+  /* Hapus height: 100% di sini untuk sementara */
+  /* height: 100%; */
 }
 
 .book-cover {
-  position: absolute; /* Posisikan absolut di dalam wrapper */
+  position: absolute;
   top: 0;
   left: 0;
-  width: 100%; /* Lebar gambar mengisi wadah */
-  height: 100%; /* Tinggi gambar mengisi wadah */
-  object-fit: contain; /* PENTING: Gambar akan menyesuaikan diri agar pas tanpa terpotong */
-  border-radius: 20px; /* Agar sudutnya tetap melengkung */
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Tetap cover untuk gambar yang ada */
+  border-radius: 20px;
 }
 
 .book-cover-placeholder {
-  position: absolute; /* Placeholder juga mengisi wadah */
+  position: absolute; /* Tetap absolute agar mengisi wrapper */
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
   border-radius: 20px;
-  background: #ddd;
+  background: #ddd; /* Pastikan placeholder punya warna latar belakang */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -92,11 +96,12 @@ body {
   font-size: 18px;
   font-family: 'Poppins', sans-serif;
   text-align: center;
+  z-index: 1; /* Pastikan placeholder di atas jika ada elemen lain */
 }
 
 .book-info {
-  flex: 1; /* Akan mengambil sisa ruang */
-  min-width: 300px; /* Minimal lebar untuk konten info */
+  flex: 1;
+  min-width: 300px;
 }
 
 .book-title {
@@ -226,10 +231,10 @@ body {
 
 /* --- Styling untuk Bintang Rating di Review List --- */
 .review-stars-display {
-  display: inline-flex; /* Agar bintang sejajar dengan teks "rated:" */
-  margin-left: 10px; /* Sedikit jarak dari teks */
-  font-size: 20px; /* Ukuran bintang */
-  color: #ccc; /* Warna bintang default (belum diisi) */
+  display: inline-flex;
+  margin-left: 10px;
+  font-size: 20px;
+  color: #ccc;
 }
 
 .star-display {
@@ -237,7 +242,7 @@ body {
 }
 
 .star-display.filled {
-  color: #ffd700; /* Warna kuning emas untuk bintang yang diisi */
+  color: #ffd700;
 }
 
 /* Notifikasi Pop-up yang Menarik (Revisi Final) */
@@ -245,37 +250,35 @@ body {
   position: fixed;
   top: 30px;
   right: 30px;
-  padding: 15px 25px; /* Sesuaikan padding */
-  border-radius: 10px; /* Sesuaikan border-radius */
+  padding: 15px 25px;
+  border-radius: 10px;
   font-weight: 600;
   font-size: 16px;
   color: white;
   z-index: 1000;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* Shadow lebih lembut dan modern */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   display: flex;
   align-items: center;
   gap: 10px;
   min-width: 250px;
-  justify-content: flex-start; /* Teks dan ikon sejajar ke kiri */
-  animation: slideInFromRight 0.5s forwards, fadeOutToRight 0.5s forwards 2.5s; /* total 3s (0.5s in, 2s visible, 0.5s out) */
-  opacity: 0; /* Mulai tersembunyi */
-  transform: translateX(100%); /* Mulai di luar layar */
-  overflow: hidden; /* Pastikan tidak ada yang meluber */
-  /* backdrop-filter: blur(5px); */ /* Efek blur opsional jika latar belakang transparan */
-  /* background-color: rgba(255, 255, 255, 0.1); */ /* Untuk semi-transparan */
+  justify-content: flex-start;
+  animation: slideInFromRight 0.5s forwards, fadeOutToRight 0.5s forwards 2.5s;
+  opacity: 0;
+  transform: translateX(100%);
+  overflow: hidden;
 }
 
 .notification-popup.success {
-  background: linear-gradient(to right, #28a745, #218838); /* Gradien hijau seperti contoh */
+  background: linear-gradient(to right, #28a745, #218838);
 }
 
 .notification-popup.error {
-  background: linear-gradient(to right, #dc3545, #c82333); /* Gradien merah seperti contoh */
+  background: linear-gradient(to right, #dc3545, #c82333);
 }
 
 .notification-icon {
-    font-size: 22px; /* Ukuran ikon */
-    color: rgba(255, 255, 255, 0.9); /* Warna ikon sedikit transparan */
+    font-size: 22px;
+    color: rgba(255, 255, 255, 0.9);
 }
 
 /* Animasi Masuk dan Keluar yang Lebih Halus */
@@ -305,12 +308,12 @@ body {
 .btn-reserve[disabled] {
     opacity: 0.6;
     cursor: not-allowed;
-    background: linear-gradient(45deg, #a0aec0, #718096); /* Warna abu-abu */
+    background: linear-gradient(45deg, #a0aec0, #718096);
     box-shadow: none;
 }
 
 .btn-reserve[disabled]:hover {
-    transform: none; /* Nonaktifkan efek hover */
+    transform: none;
 }
 
 /* Responsive Notifikasi */
@@ -318,13 +321,13 @@ body {
   .notification-popup {
     top: 20px;
     right: 20px;
-    left: 20px; /* Lebarkan notifikasi di layar kecil */
+    left: 20px;
     font-size: 14px;
     padding: 12px 20px;
     text-align: center;
     justify-content: center;
-    min-width: unset; /* Hapus min-width di layar kecil */
-    border-radius: 8px; /* Radius lebih kecil untuk mobile */
+    min-width: unset;
+    border-radius: 8px;
   }
   .notification-icon {
       font-size: 20px;
@@ -336,17 +339,18 @@ body {
   .book-detail-card {
     flex-direction: column; /* Ubah tata letak menjadi kolom */
     align-items: center; /* Pusatkan item */
-    gap: 20px; /* Kurangi jarak antar item */
+    gap: 20px;
   }
 
   .book-cover-wrapper {
-    width: 200px; /* Kurangi lebar gambar di layar kecil */
-    padding-bottom: calc(200px * 1.5); /* Sesuaikan rasio aspek di media query */
+    width: 200px;
+    height: auto; /* KEMBALIKAN: Tinggi otomatis di mode kolom */
+    padding-bottom: calc(200px * 1.5); /* KEMBALIKAN: Rasio aspek di mode kolom */
   }
 
   .book-info {
-    min-width: unset; /* Hapus min-width */
-    text-align: center; /* Pusatkan teks info */
+    min-width: unset;
+    text-align: center;
   }
 
   .book-title {
@@ -359,7 +363,7 @@ body {
 
   .user-actions,
   .admin-actions {
-    justify-content: center; /* Pusatkan tombol */
+    justify-content: center;
   }
 }
 
@@ -371,7 +375,7 @@ body {
 
     .book-cover-wrapper {
         width: 180px;
-        padding-bottom: calc(180px * 1.5); /* Sesuaikan rasio aspek di media query */
+        padding-bottom: calc(180px * 1.5);
     }
 
     .book-title {
@@ -407,35 +411,35 @@ body {
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(0, 0, 0, 0.7); /* Latar belakang gelap lebih pekat */
+    background-color: rgba(0, 0, 0, 0.7);
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 2000; /* Pastikan di atas semua elemen lain termasuk notifikasi */
+    z-index: 2000;
     opacity: 0;
     animation: fadeIn 0.3s forwards;
 }
 
 .custom-modal-content {
-    background: linear-gradient(135deg, #fefefe 0%, #f0f2f5 100%); /* Latar belakang gradien putih ke abu-abu muda */
-    padding: 35px; /* Padding lebih besar */
-    border-radius: 20px; /* Sudut lebih membulat */
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4); /* Shadow lebih menonjol */
+    background: linear-gradient(135deg, #fefefe 0%, #f0f2f5 100%);
+    padding: 35px;
+    border-radius: 20px;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
     text-align: center;
-    max-width: 500px; /* Lebar maksimal lebih besar */
+    max-width: 500px;
     width: 90%;
-    transform: translateY(-30px); /* Mulai lebih tinggi */
-    animation: slideUpAndFadeIn 0.4s forwards; /* Animasi masuk lebih halus */
+    transform: translateY(-30px);
+    animation: slideUpAndFadeIn 0.4s forwards;
     position: relative;
     overflow: hidden;
     font-family: 'Poppins', sans-serif;
-    border: 1px solid rgba(255,255,255,0.2); /* Sedikit border putih transparan */
+    border: 1px solid rgba(255,255,255,0.2);
 }
 
 .custom-modal-content::before {
     content: '';
     position: absolute;
-    top: -50px; /* Efek kilauan */
+    top: -50px;
     left: -50px;
     width: 200%;
     height: 200%;
@@ -446,55 +450,55 @@ body {
 }
 
 .custom-modal-title {
-    font-size: 28px; /* Ukuran judul lebih besar */
+    font-size: 28px;
     font-weight: 700;
-    color: #C62828; /* Warna merah yang kuat untuk peringatan */
-    margin-bottom: 25px; /* Margin lebih besar */
+    color: #C62828;
+    margin-bottom: 25px;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 15px; /* Jarak ikon dan teks lebih besar */
+    gap: 15px;
 }
 
 .custom-modal-title .modal-icon {
-    font-size: 38px; /* Ukuran ikon dalam judul modal lebih besar */
-    color: #D32F2F; /* Warna ikon yang sesuai */
-    animation: bounceIn 0.8s ease-out; /* Animasi ikon */
+    font-size: 38px;
+    color: #D32F2F;
+    animation: bounceIn 0.8s ease-out;
 }
 
 .custom-modal-message {
-    font-size: 17px; /* Ukuran pesan sedikit lebih besar */
+    font-size: 17px;
     color: #4a5568;
-    margin-bottom: 35px; /* Margin lebih besar */
+    margin-bottom: 35px;
     line-height: 1.7;
 }
 
 .custom-modal-message strong {
-    color: #2d3748; /* Agar nama buku lebih menonjol */
+    color: #2d3748;
 }
 
 .custom-modal-actions {
     display: flex;
     justify-content: center;
-    gap: 20px; /* Jarak tombol lebih besar */
+    gap: 20px;
 }
 
 .custom-modal-button {
     border: none;
-    padding: 14px 30px; /* Padding lebih besar untuk tombol */
-    font-size: 17px; /* Font tombol lebih besar */
+    padding: 14px 30px;
+    font-size: 17px;
     font-weight: 600;
-    border-radius: 10px; /* Sudut tombol lebih membulat */
+    border-radius: 10px;
     cursor: pointer;
     transition: all 0.3s ease;
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15); /* Shadow tombol lebih menonjol */
-    text-transform: uppercase; /* Uppercase pada teks tombol */
-    letter-spacing: 0.5px; /* Jarak antar huruf */
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .custom-cancel-button {
     background: linear-gradient(135deg, #a0aec0 0%, #718096 100%);
-    color: white; /* Teks putih untuk kontras lebih baik */
+    color: white;
 }
 
 .custom-cancel-button:hover {
@@ -504,7 +508,7 @@ body {
 }
 
 .custom-confirm-button {
-    background: linear-gradient(135deg, #EF5350 0%, #C62828 100%); /* Merah yang lebih menonjol */
+    background: linear-gradient(135deg, #EF5350 0%, #C62828 100%);
     color: white;
 }
 
@@ -562,7 +566,7 @@ body {
     .custom-modal-title {
         font-size: 24px;
         margin-bottom: 20px;
-        flex-direction: column; /* Tumpuk ikon dan teks di mobile */
+        flex-direction: column;
         gap: 8px;
     }
 

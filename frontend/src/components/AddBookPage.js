@@ -22,8 +22,6 @@ const AddBookPage = () => {
   const [expire, setExpire] = useState("");
   const [role, setRole] = useState("");
   const navigate = useNavigate();
-
-  // State untuk notifikasi pop-up
   const [notification, setNotification] = useState(null); // { message, type }
 
   // Fungsi helper untuk menampilkan notifikasi
@@ -87,7 +85,7 @@ const AddBookPage = () => {
       // Pastikan hanya admin yang bisa mengakses halaman ini
       if (decoded.role !== "admin") {
         triggerNotification("Anda tidak memiliki izin untuk mengakses halaman ini.", "error");
-        setTimeout(() => navigate("/dashboard"), 1500);
+        setTimeout(() => navigate("/"), 1500);
       }
     } catch (error) {
       console.log("Gagal mengambil token atau verifikasi peran:", error);
@@ -96,7 +94,7 @@ const AddBookPage = () => {
     }
   };
 
-  const handleSubmit = async (e) => {
+  const submit = async (e) => {
     e.preventDefault();
     try {
       await axiosJWT.post( // Gunakan axiosJWT
@@ -151,7 +149,7 @@ const AddBookPage = () => {
 
       <div className="add-book-card"> {/* Wrap form content in a card */}
         <h2>Add New Book</h2>
-        <form className="add-book-form" onSubmit={handleSubmit}>
+        <form className="add-book-form" onSubmit={submit}>
           <label>
             Title
             <input

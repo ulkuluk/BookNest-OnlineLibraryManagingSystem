@@ -28,10 +28,7 @@ const BookDetailPage = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [reviews, setReviews] = useState([]);
-
-  // State untuk notifikasi pop-up
-  const [notification, setNotification] = useState(null); // { message, type }
-  // State untuk modal konfirmasi delete
+  const [notification, setNotification] = useState(null);
   const [showDeleteConfirmModal, setShowDeleteConfirmModal] = useState(false);
 
   useEffect(() => {
@@ -155,7 +152,7 @@ const BookDetailPage = () => {
   };
 
   // Fungsi yang dipanggil setelah konfirmasi dari modal
-  const handleConfirmDelete = async () => {
+  const deleteBook = async () => {
     setShowDeleteConfirmModal(false); // Tutup modal setelah dikonfirmasi
     try {
       await axios.delete(`${BASE_URL}/delete-book/${id}`, {
@@ -217,7 +214,7 @@ const BookDetailPage = () => {
               </button>
               <button
                 className="custom-modal-button custom-confirm-button"
-                onClick={handleConfirmDelete}
+                onClick={deleteBook}
               >
                 Hapus Buku
               </button>

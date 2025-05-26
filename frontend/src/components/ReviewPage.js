@@ -14,8 +14,6 @@ const ReviewPage = () => {
   const [email, setEmail] = useState("");
   const [token, setToken] = useState("");
   const [expire, setExpire] = useState("");
-
-  // State baru untuk notifikasi
   const [notification, setNotification] = useState({ message: "", type: "" });
   const [showNotification, setShowNotification] = useState(false);
 
@@ -29,82 +27,73 @@ const ReviewPage = () => {
     }, 3000); // Notifikasi akan hilang setelah 3 detik
   };
 
-  const axiosJWT = useMemo(() => {
-    const instance = axios.create();
-
-    instance.interceptors.request.use(
-      async (config) => {
-        const currentDate = new Date();
-        if (expire && expire * 1000 < currentDate.getTime()) {
-          try {
-            const response = await axios.get(`${BASE_URL}/token`);
-            config.headers.Authorization = `Bearer ${response.data.accessToken}`;
-            setToken(response.data.accessToken);
-            const decoded = jwtDecode(response.data.accessToken);
-            setEmail(decoded.email);
-            setExpire(decoded.exp);
-          } catch (error) {
-            console.error("Failed to refresh token, logging out:", error);
-            localStorage.clear();
-            navigate("/");
-            window.location.reload();
-            return Promise.reject(error);
-          }
-        } else if (token) {
-          config.headers.Authorization = `Bearer ${token}`;
-        }
-        return config;
-      },
-      (error) => Promise.reject(error)
-    );
-    return instance;
-  }, [token, expire, navigate]);
-
   useEffect(() => {
-    fetchInitialToken();
+    refreshToken();
   }, []);
 
-  const fetchInitialToken = async () => {
+  const refreshToken = async () => {
     try {
-      const response = await axios.get(`${BASE_URL}/token`);
+      const response = await axiosJWT.get(`${BASE_URL}/token`);
       setToken(response.data.accessToken);
       const decoded = jwtDecode(response.data.accessToken);
       setEmail(decoded.email);
       setExpire(decoded.exp);
     } catch (error) {
-      console.error("Gagal mengambil token awal:", error);
-      if (error.response && (error.response.status === 401 || error.response.status === 403)) {
-        navigate("/login");
-      } else {
-        navigate("/");
-      }
+      console.log("gagal ngambil token", { error });
+      // if (error.response) {
+      //   navigate("/");
+      // }
     }
   };
+
+  const axiosJWT = axios.create();
+
+  axiosJWT.interceptors.request.use(
+    async (config) => {
+      const currentDate = new Date();
+      if (expire * 1000 < currentDate.getTime()) {
+        const response = await axios.get(`${BASE_URL}/token`);
+        config.headers.Authorization = `Bearer ${response.data.accessToken}`;
+        setToken(response.data.accessToken);
+        const decoded = jwtDecode(response.data.accessToken);
+        setEmail(decoded.email);
+        setExpire(decoded.exp);
+      } else if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+      return config;
+    },
+    (error) => {
+      return Promise.reject(error);
+    }
+  );
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     // Validasi rating: Pastikan rating tidak 0
     if (!email || !isbn || rating === 0 || !comment) {
-      triggerNotification("Please provide a rating and fill in all fields.", "error");
+      triggerNotification(
+        "Please provide a rating and fill in all fields.",
+        "error"
+      );
       return;
     }
 
     try {
-      await axiosJWT.post(
-        `${BASE_URL}/add-review`,
-        {
-          email,
-          isbn,
-          rating, // Mengirim nilai rating yang sudah dipilih dengan bintang
-          comment,
-        }
-      );
+      await axiosJWT.post(`${BASE_URL}/add-review`, {
+        email,
+        isbn,
+        rating, // Mengirim nilai rating yang sudah dipilih dengan bintang
+        comment,
+      });
       triggerNotification("Review submitted successfully!", "success"); // Notifikasi sukses
       setTimeout(() => navigate(`/`), 1500); // Redirect setelah notifikasi muncul
     } catch (error) {
       console.error("Failed to submit review:", error);
-      const errorMessage = error.response?.data?.msg || "Failed to submit review. Please ensure you are logged in or try again later.";
+      const errorMessage =
+        error.response?.data?.msg ||
+        "Failed to submit review. Please ensure you are logged in or try again later.";
       triggerNotification(errorMessage, "error"); // Notifikasi gagal
     }
   };
@@ -128,7 +117,9 @@ const ReviewPage = () => {
               return (
                 <span
                   key={starValue}
-                  className={`star ${starValue <= (hoverRating || rating) ? 'filled' : ''}`}
+                  className={`star ${
+                    starValue <= (hoverRating || rating) ? "filled" : ""
+                  }`}
                   onClick={() => setRating(starValue)}
                   onMouseEnter={() => setHoverRating(starValue)}
                   onMouseLeave={() => setHoverRating(0)} // Reset hover saat mouse keluar

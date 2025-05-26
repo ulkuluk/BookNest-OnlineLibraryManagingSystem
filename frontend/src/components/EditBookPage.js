@@ -7,7 +7,7 @@ import "../style/EditBookStyle.css";
 import {
   FaArrowLeft, // Icon untuk tombol kembali
   FaCheckCircle, // Icon untuk notifikasi sukses
-  FaTimesCircle // Icon untuk notifikasi error
+  FaTimesCircle, // Icon untuk notifikasi error
 } from "react-icons/fa"; // Pastikan Anda sudah menginstal react-icons (npm install react-icons)
 
 const EditBookPage = () => {
@@ -22,9 +22,7 @@ const EditBookPage = () => {
   const [token, setToken] = useState("");
   const [expire, setExpire] = useState("");
   const [role, setRole] = useState("");
-
-  // State untuk notifikasi pop-up
-  const [notification, setNotification] = useState(null); // { message, type }
+  const [notification, setNotification] = useState(null);
 
   // Fungsi helper untuk menampilkan notifikasi
   const triggerNotification = (message, type) => {
@@ -41,83 +39,79 @@ const EditBookPage = () => {
     }
   }, [notification]);
 
-
-  // Use useMemo to create axiosJWT instance
-  const axiosJWT = useMemo(() => {
-    const instance = axios.create();
-
-    instance.interceptors.request.use(
-      async (config) => {
-        const currentDate = new Date();
-        if (expire && expire * 1000 < currentDate.getTime()) {
-          try {
-            const response = await axios.get(`${BASE_URL}/token`);
-            config.headers.Authorization = `Bearer ${response.data.accessToken}`;
-            setToken(response.data.accessToken);
-            const decoded = jwtDecode(response.data.accessToken);
-            setExpire(decoded.exp);
-            setRole(decoded.role);
-          } catch (error) {
-            console.error("Failed to refresh token, logging out:", error);
-            localStorage.clear();
-            navigate("/");
-            window.location.reload();
-            return Promise.reject(error);
-          }
-        } else if (token) {
-          config.headers.Authorization = `Bearer ${token}`;
-        }
-        return config;
-      },
-      (error) => Promise.reject(error)
-    );
-    return instance;
-  }, [token, expire, navigate]);
-
   useEffect(() => {
-    const fetchInitialTokenAndBook = async () => {
-      try {
-        const tokenResponse = await axios.get(`${BASE_URL}/token`);
-        setToken(tokenResponse.data.accessToken);
-        const decoded = jwtDecode(tokenResponse.data.accessToken);
-        setExpire(decoded.exp);
-        setRole(decoded.role); // Set role to check if user is admin
+    getBookById();
+    refreshToken();
+  }, []);
 
-        // Redirect if not admin
-        if (decoded.role !== "admin") {
-          triggerNotification("Anda tidak memiliki izin untuk mengakses halaman ini.", "error");
-          setTimeout(() => navigate("/"), 1500); // Arahkan setelah notifikasi terlihat
-          return;
-        }
-
-        // Fetch book data after token is set and role is confirmed
-        const bookResponse = await axios.get(`${BASE_URL}/book/${id}`, {
-          headers: {
-            Authorization: `Bearer ${tokenResponse.data.accessToken}`,
-          },
-        });
-        const book = bookResponse.data;
-        setTitle(book.title);
-        setAuthor(book.author);
-        setDescription(book.description);
-        setIsbn(book.isbn);
-        setAvailableCopies(book.available_copies);
-        setTotalCopies(book.total_copies);
-
-      } catch (error) {
-        console.error("Error fetching initial token or book data:", error);
-        if (error.response && (error.response.status === 401 || error.response.status === 403)) {
-          triggerNotification("Anda tidak memiliki akses atau sesi telah berakhir.", "error");
-          setTimeout(() => navigate("/login"), 1500);
-        } else {
-          triggerNotification("Gagal memuat data buku.", "error");
-          setTimeout(() => navigate("/"), 1500);
-        }
+  const refreshToken = async () => {
+    try {
+      const response = await axiosJWT.get(`${BASE_URL}/token`);
+      setToken(response.data.accessToken);
+      const decoded = jwtDecode(response.data.accessToken);
+      setExpire(decoded.exp);
+      setRole(decoded.role);
+      if (decoded.role !== "admin") {
+        triggerNotification(
+          "Anda tidak memiliki izin untuk mengakses halaman ini.",
+          "error"
+        );
+        setTimeout(() => navigate("/"), 1500); // Arahkan setelah notifikasi terlihat
+        return;
       }
-    };
+    } catch (error) {
+      console.error("Error fetching initial token or book data:", error);
+      if (
+        error.response &&
+        (error.response.status === 401 || error.response.status === 403)
+      ) {
+        triggerNotification(
+          "Anda tidak memiliki akses atau sesi telah berakhir.",
+          "error"
+        );
+        setTimeout(() => navigate("/login"), 1500);
+      } else {
+        triggerNotification("Gagal memuat data buku.", "error");
+        setTimeout(() => navigate("/"), 1500);
+      }
+    }
+  };
 
-    fetchInitialTokenAndBook();
-  }, [id, navigate, axiosJWT]); // Depend on id, navigate, and axiosJWT
+  const axiosJWT = axios.create();
+
+  axiosJWT.interceptors.request.use(
+    async (config) => {
+      const currentDate = new Date();
+      if (expire * 1000 < currentDate.getTime()) {
+        const response = await axios.get(`${BASE_URL}/token`);
+        config.headers.Authorization = `Bearer ${response.data.accessToken}`;
+        setToken(response.data.accessToken);
+        const decoded = jwtDecode(response.data.accessToken);
+        setExpire(decoded.exp);
+        setRole(decoded.role);
+      }
+      return config;
+    },
+    (error) => {
+      return Promise.reject(error);
+    }
+  );
+
+  const getBookById = async () => {
+    try {
+      const response = await axios.get(`${BASE_URL}/book/${id}`);
+      const book = response.data;
+      setTitle(book.title);
+      setAuthor(book.author);
+      setDescription(book.description);
+      setIsbn(book.isbn);
+      setAvailableCopies(book.available_copies);
+      setTotalCopies(book.total_copies);
+    } catch (error) {
+      console.error("Error fetching book:", error);
+      alert("Failed to load book data.");
+    }
+  }; // Depend on id, navigate, and axiosJWT
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -130,13 +124,19 @@ const EditBookPage = () => {
           description,
           available_copies: availableCopies,
           total_copies: totalCopies,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
       );
       triggerNotification("Buku berhasil diperbarui!", "success");
       setTimeout(() => navigate(`/book-detail/${id}`), 1500); // Navigate back to book detail page after update
     } catch (error) {
       console.error("Error updating book:", error);
-      const errorMessage = error.response?.data?.msg || "Gagal memperbarui buku.";
+      const errorMessage =
+        error.response?.data?.msg || "Gagal memperbarui buku.";
       triggerNotification(errorMessage, "error");
     }
   };
@@ -155,7 +155,9 @@ const EditBookPage = () => {
         </div>
       )}
 
-      <div className="back-button-container"> {/* Tambahkan wadah untuk tombol kembali */}
+      <div className="back-button-container">
+        {" "}
+        {/* Tambahkan wadah untuk tombol kembali */}
         <Link to={`/book/${id}`} className="back-button">
           <FaArrowLeft /> Kembali
         </Link>
@@ -196,12 +198,7 @@ const EditBookPage = () => {
           </label>
           <label htmlFor="isbn">
             ISBN (cannot be edited)
-            <input
-              id="isbn"
-              type="text"
-              value={isbn}
-              readOnly
-            />
+            <input id="isbn" type="text" value={isbn} readOnly />
           </label>
           <label htmlFor="availableCopies">
             Available Copies

@@ -16,7 +16,7 @@ const Dashboard = () => {
   const [name, setName] = useState("");
   const [token, setToken] = useState("");
   const [expire, setExpire] = useState("");
-  const [role, setRole] = useState("");
+  const [role, setRole] = useState(""); // role akan kosong jika belum login
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -31,12 +31,15 @@ const Dashboard = () => {
       const decoded = jwtDecode(response.data.accessToken);
       setName(decoded.name);
       setExpire(decoded.exp);
-      setRole(decoded.role);
+      setRole(decoded.role); // Set role dari token
     } catch (error) {
       console.log("gagal ngambil token", { error });
       if (error.response) {
         navigate("/");
       }
+      // Tambahkan ini untuk memastikan role direset jika gagal mendapatkan token
+      setRole("");
+      setName("");
     }
   };
 
@@ -46,13 +49,22 @@ const Dashboard = () => {
     async (config) => {
       const currentDate = new Date();
       if (expire * 1000 < currentDate.getTime()) {
-        const response = await axios.get(`${BASE_URL}/token`);
-        config.headers.Authorization = `Bearer ${response.data.accessToken}`;
-        setToken(response.data.accessToken);
-        const decoded = jwtDecode(response.data.accessToken);
-        setName(decoded.name);
-        setExpire(decoded.exp);
-        setRole(decoded.role);
+        try {
+          const response = await axios.get(`${BASE_URL}/token`);
+          config.headers.Authorization = `Bearer ${response.data.accessToken}`;
+          setToken(response.data.accessToken);
+          const decoded = jwtDecode(response.data.accessToken);
+          setName(decoded.name);
+          setExpire(decoded.exp);
+          setRole(decoded.role); // Set role saat token diperbarui
+        } catch (error) {
+          // Jika refresh token gagal, arahkan ke halaman login
+          console.log("gagal refresh token", { error });
+          navigate("/");
+          setRole(""); // Pastikan role direset
+          setName("");
+          return Promise.reject(error);
+        }
       }
       return config;
     },
@@ -62,16 +74,18 @@ const Dashboard = () => {
   );
 
   const getBooks = async () => {
+    // Anda mungkin ingin menambahkan penanganan error di sini juga jika getBooks membutuhkan autentikasi
     const response = await axios.get(`${BASE_URL}/books`);
     setBooks(response.data);
   };
 
   const Logout = async () => {
     try {
-      await axios.delete(`${BASE_URL}/logout`, { withCredentials: true }); // atau axios.get/post sesuai backend
+      await axios.delete(`${BASE_URL}/logout`, { withCredentials: true });
       localStorage.clear();
       console.log("Logout success");
-      window.location.reload();
+      navigate("/"); // Arahkan ke halaman utama setelah logout
+      window.location.reload(); // Mungkin tidak perlu jika navigate sudah cukup
     } catch (error) {
       console.log(error);
     }
@@ -83,19 +97,27 @@ const Dashboard = () => {
       <div className="sidebar">
         <h1 className="logo">BookNest</h1>
         <ul className="nav-list">
+          {/* Dashboard selalu terlihat */}
           <li>
             <FaTachometerAlt className="icon" /> Dashboard
           </li>
-          <Link to="reservation">
-            <li>
-              <FaBook className="icon" /> Reservation
-            </li>
-          </Link>
-          <li>
-            <Link to="/user-info">
-              <FaClipboardList className="icon" /> Account
+          {/* Item Reservation hanya terlihat jika role ada */}
+          {role && (
+            <Link to="reservation">
+              <li>
+                <FaBook className="icon" /> Reservation
+              </li>
             </Link>
-          </li>
+          )}
+          {/* Item Account hanya terlihat jika role ada */}
+          {role && (
+            <li>
+              <Link to="/user-info">
+                <FaClipboardList className="icon" /> Account
+              </Link>
+            </li>
+          )}
+          {/* Item Reservation (admin) hanya terlihat jika role adalah 'admin' */}
           {role === "admin" && (
             <Link to="reservation-admin">
               <li>
@@ -104,9 +126,12 @@ const Dashboard = () => {
             </Link>
           )}
         </ul>
-        <button onClick={Logout} className="logout">
-          <FaSignOutAlt className="icon" /> Logout
-        </button>
+        {/* Tombol Logout hanya terlihat jika role ada */}
+        {role && (
+          <button onClick={Logout} className="logout">
+            <FaSignOutAlt className="icon" /> Logout
+          </button>
+        )}
       </div>
 
       {/* Main Content */}
@@ -131,6 +156,7 @@ const Dashboard = () => {
         </div>
         <div className="books-header">
           <h2>Books</h2>
+          {/* Tombol Add Book hanya terlihat jika role adalah 'admin' */}
           {role === "admin" && (
             <Link to="/add-book">
               <button className="add-book-button">Add Book</button>
