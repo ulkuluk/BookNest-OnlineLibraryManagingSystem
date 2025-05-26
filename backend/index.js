@@ -17,7 +17,7 @@ app.use(cookieParser());
 app.use(
   cors({
     credentials: true,
-    origin: ["http://localhost:3000", "https://if-b-08.uc.r.appspot.com"],
+    origin: ["http://localhost:3000", "https://booknesttest-dot-if-b-08.uc.r.appspot.com"],
   })
 );
 app.get("/", (req, res) => res.render("index"));
