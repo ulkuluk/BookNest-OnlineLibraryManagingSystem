@@ -106,7 +106,7 @@ const ReservationPage = () => {
     if (!reservationToDelete) return; // Pastikan ada ID yang akan dihapus
 
     try {
-      await axios.delete(`${BASE_URL}/delete-reservation/${reservations.id}`, {
+      await axios.delete(`${BASE_URL}/delete-reservation/${reservationToDelete}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
