@@ -43,7 +43,7 @@ const Dashboard = () => {
     }
   };
 
-  const axiosJWT = axios.create();
+  const axiosJWT = axios.create({withCredentials: true,});
 
   axiosJWT.interceptors.request.use(
     async (config) => {
