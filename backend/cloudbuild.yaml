@@ -35,7 +35,7 @@ steps:
       [
         "run",
         "deploy",
-        "be-rest",
+        "booknest-be",
         "--image",
         "gcr.io/$PROJECT_ID/booknest",
         "--timeout",
