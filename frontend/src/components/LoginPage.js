@@ -32,7 +32,7 @@ const LoginPage = () => {
         },
       );
       console.log("Login success:", response.data);
-      localStorage.setItem("token", response.data.accessToken);
+
 
       // Notifikasi sukses
       setNotification({ message: "Login berhasil! Selamat datang.", type: "success" });
