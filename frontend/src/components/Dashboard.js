@@ -85,7 +85,7 @@ const Dashboard = () => {
       localStorage.clear();
       console.log("Logout success");
       navigate("/"); // Arahkan ke halaman utama setelah logout
-      window.location.reload(); // Mungkin tidak perlu jika navigate sudah cukup
+      
     } catch (error) {
       console.log(error);
     }
